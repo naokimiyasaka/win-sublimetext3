@@ -1,0 +1,42 @@
+[
+    { "keys": ["ctrl+alt+right"], "command": "next_view" },
+    { "keys": ["ctrl+alt+left"], "command": "prev_view" },
+    { "keys": ["ctrl+pagedown"], "command": "next_view_in_stack" },
+    { "keys": ["ctrl+pageup"], "command": "prev_view_in_stack" },
+    // F3で関数の宣言元にジャンプ
+    { "keys": ["f2"], "command": "goto_definition" },
+    // alt+左で戻る
+    { "keys": ["shift+f2"], "command": "jump_back" },
+    // alt+右で戻ったのをまた進める
+    //{ "keys": ["ctrl+alt+right"], "command": "jump_forward" },
+    // Go to left bracket
+    {
+        "keys": ["alt+up"],
+        "command": "bh_key",
+        "args":
+        {
+            "lines" : true,
+            "plugin":
+            {
+                "type": ["__all__"],
+                "command": "bh_modules.bracketselect",
+                "args": {"select": "left"}
+            }
+        }
+    },
+    // Go to right bracket
+    {
+        "keys": ["alt+down"],
+        "command": "bh_key",
+        "args":
+        {
+            "lines" : true,
+            "plugin":
+            {
+                "type": ["__all__"],
+                "command": "bh_modules.bracketselect",
+                "args": {"select": "right"}
+            }
+        }
+    }
+]

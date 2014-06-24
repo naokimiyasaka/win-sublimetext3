@@ -1,0 +1,27 @@
+{
+	"licensed": false,
+	"packages":
+	[
+		"All Autocomplete",
+		"AndyPHP",
+		"AutoFileName",
+		"CTags",
+		"DocBlockr",
+		"EditorConfig",
+		"Goto-CSS-Declaration",
+		"Package Control",
+		"PHP Getters and Setters",
+		"SimpleClone",
+		"SuperNavigator",
+		"SyncedSideBar",
+		"Theme - Flatland",
+		"Tmux",
+		"TrailingSpaces"
+	],
+	"startup_sec": 0.3112156,
+	"syntax":
+	{
+		"JSON": 3
+	},
+	"time": 1403576341
+}
