@@ -1,0 +1,29 @@
+入っているパッケージ
+                "All Autocomplete",                     //標準の自動補完（オートコンプリート）機能を強化し、マッチする文字列があればサジェストする。
+                "AndyPHP",                                      //PHPの関数群をコードアシストをサポート
+                "AutoFileName",                         //タグやcssなどで、パスを入力する時に、ファイル名を補完する
+                "BracketHighlighter",           //タグやクォーテーションマークなどの開始と終了をハイライトしてくれる
+                "ConvertToUTF8",                        //文字エンコードのShiftJIS等をUTF8に変換する
+                "CTags",                                        //宣言元にジャンプ
+                "DocBlockr",                            //コメントを楽にしてくれる
+                "EditorConfig",                         //エディタの設定の共通
+                "Goto-CSS-Declaration",         //cssを編集している時にジャンプとかできる
+                "HTML-CSS-JS Prettify",         //整形ツール
+                "IMESupport",                           //インライン入力用
+                "IndentGuides",                         //インデントに色を付ける
+                "Package Control",                      //sublimeのパッケージ管理
+                "PHP Getters and Setters",      //get setを自動で作成するものだと思う
+                "PhpBeautifier",                        //コードフォーマッター
+                "SimpleClone",                          //同じファイルを分割表示できるようにする
+                "SuperNavigator",                       //ソースからあいまい検索する
+                "SyncedSideBar",                        //サイドバーのソースを選択するのをハイライトにしている
+                "Theme - Flatland",
+                "Tmux",
+                "TrailingSpaces"
+                "SublimeREPL",                          //PCに入れている複数の開発言語のコマンド・ライン等がSublimeTextで使用できるようになります。
+                "More Layouts",                         //画面分割を細かく設定できる
+
+        "repositories"://リポジトリを追加
+        [
+                "https://github.com/wuub/SublimeREPL"
+        ]

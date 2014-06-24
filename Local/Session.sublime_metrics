@@ -9,6 +9,7 @@
 		"DocBlockr",
 		"EditorConfig",
 		"Goto-CSS-Declaration",
+		"More Layouts",
 		"Package Control",
 		"PHP Getters and Setters",
 		"SimpleClone",
@@ -18,10 +19,12 @@
 		"Tmux",
 		"TrailingSpaces"
 	],
-	"startup_sec": 0.3112156,
+	"startup_sec": 0.3703203,
 	"syntax":
 	{
-		"JSON": 3
+		"JSON": 13,
+		"JavaScript": 4,
+		"Plain text": 2
 	},
 	"time": 1403576341
 }

@@ -25,38 +25,30 @@
 			"buffers":
 			[
 				{
-					"file": "/D/WebGame/XD/ig-root/XD/src/amfphp/Com/battle.php",
+					"file": "/D/WebGame/XD/ig-root/node/arena.js",
 					"settings":
 					{
-						"buffer_size": 998,
+						"buffer_size": 11795,
 						"line_ending": "Unix"
 					}
 				},
 				{
-					"contents": "<?php\n/**\n * @file dungeonField.php\n * \n * @brief dungeonField edit function\n * \n * @author sam\n * \n * History: $Date: 2012-06-20 15:06:19 +0800 (週三, 20 六月 2012) $ modified\n * \n * $Rev: 152 $\n */\n\nclass dungeonField\n{\n	public function __construct()\n	{\n		try\n		{		\n			$this->CONNECT=new mysqlconnect();\n			$this->IndexPDOConnect=$this->CONNECT->getIndexPDOConnect();			\n			$this->SHARE=new share();			\n		}\n		catch(Exception $e)\n		{\n			throw $e;\n		}\n	}\n	\n	public function __destruct()\n	{		\n		try\n		{\n			$this->CONNECT=null;\n			$this->IndexPDOConnect=null;\n			$this->PlayerPDOConnect=null;			\n			$this->SHARE=null;\n		}\n		catch(Exception $e)\n		{\n			throw $e;\n		}\n	}\n	\n	public function dungeonFieldList($uid,$authkey,&$connect=NULL)\n	{\n		require 'php_include/dungeon_field_list.php';\n		if($connect!=NULL) $this->PlayerPDOConnect=$connect;\n		else 			   $this->PlayerPDOConnect=$this->CONNECT->getPlayerPDOConnect($uid);\n		\n		$USER=new user();\n		$userInfo=$USER->userInfo($uid);\n		if($userInfo[\"result_id\"]!=1) return array(\"result_id\"=>0,\"error\"=>\"ERROR_1000\");\n		\n		$sql='SELECT * FROM user_dungeon_field WHERE uid=:uid';\n		$sth=$this->PlayerPDOConnect->prepare($sql);\n		$sth->bindParam(':uid',$uid,PDO::PARAM_STR);\n		$sth->execute();\n		$data=$sth->fetch(PDO::FETCH_ASSOC);\n		$sth->closeCursor();\n		\n		$nowTime=$this->SHARE->systemTime('GMT');\n		if(!$data){			\n			$data[\"uid\"]=$uid;\n			$data[\"refresh_time\"]=$nowTime;\n			$data[\"tower\"]=$data[\"now_tower\"]=0;			\n			$sql=\"INSERT INTO `user_dungeon_field` (`uid`, `tower`, `now_tower`, `refresh_time`) VALUES (:uid, :tower, :now_tower, :refresh_time)\";\n			$sth=$this->PlayerPDOConnect->prepare($sql);   		\n			$sth->bindParam(':uid', $uid,PDO::PARAM_STR);\n			$sth->bindParam(':tower', $dungeon_field_list_key[0][0][\"dungeon_field_id\"],PDO::PARAM_INT);\n			$sth->bindParam(':now_tower', $dungeon_field_list_key[0][0][\"dungeon_field_id\"],PDO::PARAM_INT);\n			$sth->bindParam(':refresh_time', $nowTime,PDO::PARAM_STR);\n			$sth->execute();\n			$insertFlag=$sth->rowCount();\n			$sth->closeCursor();			\n			if(!$insertFlag) return array(\"result_id\"=>0,\"error\"=>\"ERROR_1099\");\n			\n			$vip=$this->SHARE->vipList($userInfo['vip_lv']);\n			if($vip['result_id'] == 0) return $vip;				\n			$props=array(\"dungeon_refresh_count\"=>$vip[\"dungeon_refresh_count\"]);\n			$save=$this->SHARE->setUserInfoProp($this->IndexPDOConnect,\"\",$userInfo,$props,false,$this->PlayerPDOConnect);				\n			if(!$save[\"status\"]) return array(\"result_id\"=>0,\"error\"=>\"ERROR_1013\");			\n		}else{			\n			$refreshDate=date(\"Y-m-d\",strtotime($data[\"refresh_time\"]));\n			$nowDate=date(\"Y-m-d\",strtotime($nowTime));\n			if($nowDate != $refreshDate && strtotime($nowTime) > strtotime($data[\"refresh_time\"])){				\n				$vip=$this->SHARE->vipList($userInfo['vip_lv']);\n				if($vip['result_id'] == 0) return $vip;				\n				$props=array(\"dungeon_refresh_count\"=>$vip[\"dungeon_refresh_count\"]);\n				$save=$this->SHARE->setUserInfoProp($this->IndexPDOConnect,\"\",$userInfo,$props,false,$this->PlayerPDOConnect);				\n				if(!$save[\"status\"]) return array(\"result_id\"=>0,\"error\"=>\"ERROR_1013\");\n				\n				$saveTime=$this->saveDungeonFieldTime($uid,$nowTime);\n				if(!$saveTime[\"status\"]) return array(\"result_id\"=>0,\"error\"=>\"ERROR_1099\");\n				$userInfo[\"dungeon_refresh_count\"]=$save[\"userInfo\"][\"dungeon_refresh_count\"];\n			}			\n		}\n		return array(\"userInfo\"=>$userInfo[\"dungeon_refresh_count\"],\"dungeonList\"=>$data,\"status\"=>1);\n	}\n	\n	private function saveDungeonFieldTime($uid,$refreshTime){		\n		$sql=\"UPDATE `user_dungeon_field` SET `refresh_time`=:refresh_time WHERE uid=:uid\";\n		$sth=$this->PlayerPDOConnect->prepare($sql);		\n		$sth->bindParam(':uid',$uid,PDO::PARAM_STR);\n		$sth->bindParam(':refresh_time',$refreshTime,PDO::PARAM_STR);				\n		$sth->execute();	\n		$count=$sth->rowCount();\n		$sth->closeCursor();				\n		if($count != 1) return array(\"status\"=>false);\n		return array(\"status\"=>true);\n	}\n}\n?>",
-					"file": "/D/WebGame/XD/ig-root/XD/src/amfphp/Com/dungeonField.php",
-					"file_size": 3887,
-					"file_write_time": 130402722359815846,
+					"contents": "<?\n/**\n * @file award.php\n * \n * @brief class award, process award data\n * \n * @author sam\n * \n * History: $Date: 2012-10-05 11:48:38 +0800 (週五, 05 十月 2012) $ modified\n * \n * $Rev: 3145 $\n */\n \n class award{\n	\n	public function __construct()\n	{\n		$this->CONNECT = new mysqlconnect();\n		$this->IndexPDOConnect = $this->CONNECT->getIndexPDOConnect();\n		$this->PlayerPDOConnect = NULL;\n		$this->SHARE = new share();\n	}\n\n	public function __destruct()\n	{\n		try\n		{\n			$this->IndexPDOConnect = NULL;			\n			$this->PlayerPDOConnect = NULL;\n			$this->CONNECT = NULL;\n			$this->SHARE = NULL;\n		}\n		catch(Exception $e)\n		{\n			throw $e;\n		}\n	}\n	\n	public function awardNewPlayerCash($uid,$authkey){		\n		# # 新手元寶 login 會回傳server time\n		$this->PlayerPDOConnect=$this->CONNECT->getPlayerPDOConnect($uid);			\n		$USER=new user();\n		$userInfo=$USER->userInfo($uid);\n		if($userInfo[\"result_id\"]==0) return array(\"error\"=>\"ERROR_1000\");\n		\n		$reveiveInfo=explode(\";\",RECEIVE_CASH);				\n		$time=$this->SHARE->systemTime(\"GMT\");		\n		$date=substr($time,0,10);				\n		$sTime=$date.\" 00:00:00\";\n		$eTime=$date.\" 23:59:59\";				\n		\n		$sql=\"SELECT COUNT(*) as count FROM user_award WHERE uid=:uid AND type=1\";\n		$sth=$this->PlayerPDOConnect->prepare($sql);\n		$sth->bindParam(':uid', $uid,PDO::PARAM_STR);		\n		$sth->execute();\n		$count=$sth->fetch(PDO::FETCH_ASSOC);				\n		$sth->closeCursor();						\n		if($count[\"count\"] >= count($reveiveInfo)) return array(\"error\"=>\"ERROR_2072\");		\n		\n		$sql=\"SELECT uid FROM user_award WHERE uid=:uid AND type=1 AND (create_time >= :stime AND create_time <= :etime)\";\n		$sth=$this->PlayerPDOConnect->prepare($sql);\n		$sth->bindParam(':uid', $uid,PDO::PARAM_STR);\n		$sth->bindParam(':stime', $sTime,PDO::PARAM_STR);\n		$sth->bindParam(':etime', $eTime,PDO::PARAM_STR);\n		$sth->execute();\n		$dailyInfo=$sth->fetch(PDO::FETCH_ASSOC);				\n		$sth->closeCursor();				\n		# 今天已經領取過\n		if($dailyInfo) return array(\"error\"=>\"ERROR_2073\");\n		\n		if(!$count[\"count\"]) $index=0; # $count[\"count\"] = 0\n		else				 $index=$count[\"count\"];	\n		\n		# 更新 cash && receive_cash_count欄位\n		$props=array(\"cash\"=>$reveiveInfo[$index],\"receive_cash_count\"=>$index+1);		\n		$update=$this->SHARE->setUserInfoProp($this->IndexPDOConnect,\"new_player_cash\",$userInfo,$props,false,$this->PlayerPDOConnect);	\n		if(!$update[\"status\"]){\n			return array(\"error\"=>\"ERROR_1058\");						\n		}\n		\n		$insert=$this->insertAwardToDB($uid,$time);\n		if(!$insert[\"status\"]){	\n			return array(\"error\"=>\"ERROR_1057\");\n		}			\n		# cashFlag 今天是否可以領取,領取次數 false, 不可領取\n		return array(\"userInfo\"=>$update[\"userInfo\"],\"addCash\"=>$reveiveInfo[$index],\"cashFlag\"=>false);					\n	}	\n	\n	# public function newPlayerCardGenerator($account)	\n	# {		\n		# 此功能移除暫不使用\n	# 	$time=$this->SHARE->systemTime('GMT');		\n	# 	$unixTime=mktime('00','00','00',substr($time,5,2),substr($time,8,2),substr($time,0,4));		\n	# 	$checkNum=$account.$unixTime;			\n	# 	$encodeOneNum=md5($checkNum);				\n	# 	$front=substr($encodeOneNum,0,5);		\n	# 	$back=substr($encodeOneNum,-5,5); 					\n	# 	$encodeTwoNum=md5($front.$back);	\n\n		# 檢查account\n	# 	$USER=new user();\n	# 	$userInfo=$USER->authAccount($account,'FB');\n	# 	if(!$userInfo[\"status\"]) return array(\"ERROR_2081\");	\n		\n	# 	$this->PlayerPDOConnect=$this->CONNECT->getPlayerPDOConnect($userInfo[\"info\"][\"uid\"]);							\n	# 	$sql=\"SELECT card_num,is_use FROM `user_newplayercard` WHERE `uid`=:uid\";\n	# 	$sth=$this->PlayerPDOConnect->prepare($sql);\n	# 	$sth->bindParam(':uid', $userInfo[\"info\"][\"uid\"],PDO::PARAM_STR);		\n	# 	$sth->execute();\n	# 	$getCardInfo=$sth->fetch(PDO::FETCH_ASSOC);			\n	# 	$sth->closeCursor();		\n	# 	if(!$getCardInfo){			\n	# 		$sql=\"INSERT INTO `user_newplayercard` (`uid`, `card_num`, `create_time`) VALUES (:uid,:card_num,:create_time)\";\n	# 		$sth=$this->PlayerPDOConnect->prepare($sql);\n	# 		$sth->bindParam(':uid', $userInfo[\"info\"][\"uid\"],PDO::PARAM_STR);\n	# 		$sth->bindParam(':card_num', $encodeTwoNum,PDO::PARAM_STR);\n	# 		$sth->bindParam(':create_time', $time,PDO::PARAM_STR);\n	# 		$sth->execute();\n	# 		$insertFlag=$sth->rowCount();		\n	# 		$sth->closeCursor();				\n	# 		if(!$insertFlag) return array(\"error\"=>\"ERROR_1061\");\n	# 		return $encodeTwoNum;\n	# 	}else{			\n	# 		return $getCardInfo[\"card_num\"];\n	# 	}\n	# }\n	\n	public function awardSerialExchange($uid,$authkey,$serial){	\n		# 序號兌換(新人卡) 序號是唯一性		\n		$USER=new user();\n		$bag=null;		\n		$uinfo=$USER->userInfo($uid);\n		if($uinfo['result_id'] == 0) return $uinfo;\n		\n		$this->PlayerPDOConnect=$this->CONNECT->getPlayerPDOConnect($uid);\n		$pinfo=$USER->partnerInfo($uid, $uid, $this->PlayerPDOConnect);\n		if($pinfo['result_id'] == 0) return $pinfo;\n		$pinfo=$pinfo[0];\n				\n		$serialInfo=$this->getAwardSerial($serial);		\n		if(!$serialInfo) return array(\"warning\"=>\"WARNING_5002\");\n		if($serialInfo[\"uid\"] != 0) return array(\"warning\"=>\"WARNING_5022\");\n		\n		$activiity=$this->getAwardActivity($serialInfo[\"activity_id\"]);\n		$dateTime=$this->SHARE->getNowTime();	\n		$daily=date(\"Y-m-d H:i:s\",$dateTime);		\n		\n		$start=strtotime($activiity[\"start_time\"]);\n		$end=strtotime($activiity[\"end_time\"]);\n		if($dateTime < $start || $dateTime > $end) return array(\"warning\"=>\"WARNING_5020\");\n\n		if($activiity[\"allow_get_again\"] == 0){\n			$exchangeCount=$this->getExchangeSerialCount($uid,$serialInfo[\"activity_id\"]);\n			if($exchangeCount[\"count\"] > 0) return array(\"warning\"=>\"WARNING_5021\"); # 不允許同個帳號領取多次			\n		}\n					\n		$summary=array('item' => array(), 'coin' => 0, 'cash' => 0, 'mature' => 0, 'prestige' => 0, 'material' => 0, 'soul' => 0, 'exp' => 0);\n		$summary=$this->summaryDailyReward($uid, $activiity['reward_type'], $activiity['item1_type'], $activiity['item1_id'], $activiity['item1_count'], $summary, $pinfo);\n		$summary=$this->summaryDailyReward($uid, $activiity['reward_type'], $activiity['item2_type'], $activiity['item2_id'], $activiity['item2_count'], $summary, $pinfo);\n		$summary=$this->summaryDailyReward($uid, $activiity['reward_type'], $activiity['item3_type'], $activiity['item3_id'], $activiity['item3_count'], $summary, $pinfo);\n				\n		# 建議只取第一個, 檢查包包是否已滿	\n		$LOG=new log();\n		for($i=0; $i<count($summary['item']);$i++){\n			$check=$this->SHARE->checkBagFull($uid, 0, $summary['item'][$i]['item_id'], $summary['item'][$i]['count'], NULL, $uinfo);\n			if($check['result_id'] == 0) return $check;\n			$bag=$USER->addItemToBag($uid, 0, $summary['item'][$i]['item_id'], $summary['item'][$i]['count'], $connect);\n			if($bag['result_id'] == 0) return $bag;\n			$insertLog=$LOG->addLog($uid,'serial_exchange','add_item',0,0,0,0,0,0,0,$summary['item'][$i]['count'],$summary['item'][$i]['item_id'],$this->PlayerPDOConnect);\n		}\n		\n		if ($summary['coin'] !=0 || $summary['cash'] !=0 || $summary['mature'] !=0 || $summary['prestige'] !=0 || $summary['material'] !=0 || $summary['soul'] !=0){\n			$props=array(\"coin\"=>$summary['coin'],\"cash\"=>$summary['cash'],\n						 \"mature\"=>$summary['mature'],\"prestige\"=>$summary['prestige'],\n						 \"material\"=>$summary['material'],\"soul\"=>$summary['soul'] );\n			\n			if($summary['prestige']>0) $partyInfo=$USER->getPartyExp($uinfo[\"party_id\"]);\n			$update=$this->SHARE->setUserInfoProp($this->IndexPDOConnect,\"serial_exchange\",$uinfo,$props,false,$this->PlayerPDOConnect);\n			if(!$update[\"status\"]) return array(\"error\"=>\"ERROR_1058\");\n			$uinfo=$update[\"userInfo\"];\n\n			if($update[\"partyStatus\"]==true && $update[\"partyChanged\"]==true){ # 聲望獎勵 打開openFunction				\n				$oldPartyLv=$this->SHARE->getPartyLv($partyInfo[\"party_exp\"]); # 更新幫派資訊 check 幫派是否升級\n				$newPartyLv=$this->SHARE->getPartyLv($partyInfo[\"party_exp\"]+$summary[\"prestige\"]);												\n				if($newPartyLv > $oldPartyLv){\n					$memcahce=new memorycache($uid);\n					$info=$USER->userInfoForMemcache($uid, 2);	\n					$functionList=json_encode($info['openFunction']);			\n					$memcahce->setMemoryCache('XDPlayerFunction_'.$uid,$functionList);			\n				}\n			}			\n		}\n				\n		$sql=\"UPDATE `award_serial` SET uid=:uid,get_time=:getTime WHERE serial=:serial AND activity_id=:activity_id\";\n		$sth=$this->IndexPDOConnect->prepare($sql);\n		$sth->bindParam(':uid', $uid,PDO::PARAM_STR);\n		$sth->bindParam(':getTime', $daily,PDO::PARAM_STR);\n		$sth->bindParam(':serial', $serialInfo[\"serial\"],PDO::PARAM_STR);\n		$sth->bindParam(':activity_id', $serialInfo[\"activity_id\"],PDO::PARAM_INT);\n		$sth->execute();\n		$count=$sth->rowCount();	\n		$sth->closeCursor();			\n		if($count == 0) return array(\"error\"=>\"ERROR_1061\");			\n		\n		$result['reward']=$summary;\n		$result['userInfo']=$this->SHARE->removeResultId($uinfo);\n		if(is_array($bag)) $result['userItem']=$this->SHARE->removeResultId($bag);\n		$result['openFunction']=$functionList;\n		return $result;\n	}\n	\n	private function summaryDailyReward($uid, $reward_type, $itemType, $itemId, $count, $summary){	\n		switch ($itemType){\n			case \"coin\": $summary['coin'] += $count; break; # 普通coin\n			case \"cash\": $summary['cash'] += $count; break;\n			case \"exp\": $summary['exp'] += $count; break;\n			case \"mature\": $summary['mature'] += $count; break;\n			case \"prestige\": $summary['prestige'] += $count; break;\n			case \"material\": $summary['material'] += $count; break;\n			case \"soul\": $summary['soul'] += $count; break;\n			case \"item\": $summary['item'] = $this->summaryItemReward($summary['item'], $itemId, $count); break;\n			case 'NULL': break;\n			case 'null': break;\n			case '0': break;\n			case '': break;\n		}\n		return $summary;\n	}\n	\n	private function summaryItemReward($summary, $itemId, $count){		\n		$flag = 0;\n		$summaryCount = count($summary);\n		for ($i = 0; $i < $summaryCount; $i++){\n			if ($summary[$i]['item_id'] == $itemId){\n				$summary[$i]['count'] += $count;\n				$flag = 1;\n				break;\n			}\n		}\n		if ($flag == 0)\n			array_push($summary, array('item_id' => $itemId, 'count' => $count) );\n		return $summary;\n	}\n	\n	private function getExchangeSerialCount($uid,$activityId){\n		$sql=\"SELECT COUNT(*) as count FROM `award_serial` WHERE uid=:uid AND activity_id=:activity_id\";\n		$sth=$this->IndexPDOConnect->prepare($sql);\n		$sth->bindParam(':uid', $uid,PDO::PARAM_INT);		\n		$sth->bindParam(':activity_id', $activityId,PDO::PARAM_INT);		\n		$sth->execute();\n		$count=$sth->fetch(PDO::FETCH_ASSOC);			\n		$sth->closeCursor();\n		return $count;\n	}\n	\n	private function getAwardSerial($serial){\n		$sql=\"SELECT * FROM `award_serial` WHERE serial=:serial\";\n		$sth=$this->IndexPDOConnect->prepare($sql);\n		$sth->bindParam(':serial', $serial,PDO::PARAM_INT);		\n		$sth->execute();\n		$serialInfo=$sth->fetch(PDO::FETCH_ASSOC);			\n		$sth->closeCursor();\n		return $serialInfo;\n	}\n	\n	private function getAwardActivity($activityId){\n		$sql=\"SELECT * FROM `award_activity` WHERE activity_id=:activity_id\";\n		$sth=$this->IndexPDOConnect->prepare($sql);\n		$sth->bindParam(':activity_id', $activityId,PDO::PARAM_INT);		\n		$sth->execute();\n		$activiityInfo=$sth->fetch(PDO::FETCH_ASSOC);			\n		$sth->closeCursor();\n		return $activiityInfo;\n	}\n	\n	private function insertAwardToDB($uid,$time)\n	{\n		$sql=\"INSERT INTO `user_award` (`uid`, `type`, `create_time`) VALUES (:uid,1,:create_time)\";											  \n		$sth=$this->PlayerPDOConnect->prepare($sql);   				\n		$sth->bindParam(':uid',$uid,PDO::PARAM_STR);			\n		$sth->bindParam(':create_time',$time,PDO::PARAM_STR);			\n   		$sth->execute();\n   		$insertFlag=$sth->rowCount();\n   		$sth->closeCursor();\n		if(!$insertFlag) return array(\"status\"=>false);\n		return array(\"status\"=>true);\n	}	\n}\n?>",
+					"file": "/D/WebGame/XD/ig-root/XD/src/amfphp/Com/award.php",
+					"file_size": 11391,
+					"file_write_time": 130402722354163021,
 					"settings":
 					{
-						"buffer_size": 3883,
+						"buffer_size": 11283,
 						"line_ending": "Unix",
 						"scratch": true
 					}
 				},
 				{
-					"file": "/D/WebGame/XD/ig-root/XD/src/amfphp/Com/function.php",
+					"file": "/D/WebGame/XD/ig-root/node/dbCommander.js",
 					"settings":
 					{
-						"buffer_size": 34595,
-						"line_ending": "Unix"
-					}
-				},
-				{
-					"file": "/D/WebGame/XD/ig-root/XD/src/amfphp/Com/log.php",
-					"settings":
-					{
-						"buffer_size": 9086,
+						"buffer_size": 187887,
 						"line_ending": "Unix"
 					}
 				}
@@ -64,16 +56,44 @@
 			"build_system": "",
 			"command_palette":
 			{
-				"height": 113.0,
+				"height": 370.0,
 				"selected_items":
 				[
 					[
-						"mini",
-						"View: Toggle Minimap"
+						"sh",
+						"SublimeREPL: Shell"
+					],
+					[
+						"she",
+						"SublimeREPL: Shell"
+					],
+					[
+						"shell",
+						"SublimeREPL: Shell"
+					],
+					[
+						"install",
+						"Package Control: Install Package"
+					],
+					[
+						"",
+						"Package Control: List Packages"
+					],
+					[
+						"insta",
+						"Package Control: Install Package"
+					],
+					[
+						"add re",
+						"Package Control: Add Repository"
 					],
 					[
 						"list",
 						"Package Control: List Packages"
+					],
+					[
+						"mini",
+						"View: Toggle Minimap"
 					],
 					[
 						"in",
@@ -81,10 +101,6 @@
 					],
 					[
 						"i",
-						"Package Control: Install Package"
-					],
-					[
-						"install",
 						"Package Control: Install Package"
 					]
 				],
@@ -95,6 +111,14 @@
 				"height": 126.0,
 				"history":
 				[
+					"php",
+					"php -v",
+					"shell",
+					"php -v",
+					"php --v",
+					"php -v",
+					"ls",
+					"ll",
 					"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by) "
 				]
 			},
@@ -109,7 +133,58 @@
 			},
 			"file_history":
 			[
+				"/D/WebGame/XD/ig-root/node/dbCache.js",
+				"/D/WebGame/XD/ig-root/XD/src/skins/button/DashboardBtnArrangement.mxml",
+				"/D/WebGame/XD/ig-root/deploy/doc/deploy.py",
+				"/C/Users/naokimiyasaka/AppData/Roaming/Sublime Text 3/user_packages_list.txt",
+				"/C/Users/naokimiyasaka/AppData/Roaming/Sublime Text 3/Packages/SublimeREPL/config/Shell/Main.sublime-menu",
+				"/D/WebGame/KH_Main/branches/探索システムの調査",
+				"/D/WebGame/KH_Main/branches/探索システムでの作業分割一覧",
+				"/D/WebGame/KH_Main/branches/探索システムに使用するカラムを追加するsql",
+				"/C/Users/naokimiyasaka/AppData/Roaming/Sublime Text 3/Packages/SublimeREPL/config/Shell/Default.sublime-commands",
+				"/C/Users/naokimiyasaka/AppData/Roaming/Sublime Text 3/Packages/SublimeREPL/SublimeREPL.sublime-settings",
+				"/C/Users/naokimiyasaka/AppData/Roaming/Sublime Text 3/Packages/User/SublimeREPL.sublime-settings",
 				"/C/Users/naokimiyasaka/AppData/Roaming/Sublime Text 3/Packages/User/Package Control.sublime-settings",
+				"/C/Users/naokimiyasaka/AppData/Roaming/Sublime Text 3/Packages/User/user_packages_list.txt",
+				"/D/WebGame/XD/ig-root/admintool/application/config/database.php",
+				"/D/WebGame/XD/ig-root/admintool/application/config/constants.php",
+				"/D/WebGame/XD/ig-root/admintool/application/config/config.php",
+				"/D/WebGame/XD/ig-root/admintool/application/config/autoload.php",
+				"/D/WebGame/XD/ig-root/XD/src/redirect.php",
+				"/D/WebGame/XD/ig-root/XD/src/playerlist.php",
+				"/D/WebGame/XD/ig-root/XD/src/main.php",
+				"/D/WebGame/XD/ig-root/XD/src/index.php",
+				"/D/WebGame/XD/ig-root/XD/src/gateway.php",
+				"/D/WebGame/XD/ig-root/XD/src/battle.php",
+				"/D/WebGame/XD/ig-root/XD/src/authcheck.php",
+				"/D/WebGame/XD/ig-root/GameBattleSwf/src/index.php",
+				"/D/WebGame/XD/ig-root/deploy/test_program/test.php",
+				"/D/WebGame/XD/ig-root/deploy/test_program/memcache.php",
+				"/D/WebGame/XD/ig-root/admintool/index.php",
+				"/D/WebGame/XD/ig-root/node/node_modules/mysql/lib/protocol/packets/ResultSetHeaderPacket.js",
+				"/D/WebGame/XD/ig-root/Backstage/Program/XdManager/Bin/NPOI.HPSF.xml",
+				"/D/WebGame/XD/ig-root/node/node_modules/mysql/lib/protocol/packets/HandshakeInitializationPacket.js",
+				"/D/WebGame/XD/ig-root/Backstage/Program/Bin/NPOI.HPSF.xml",
+				"/D/WebGame/XD/ig-root/XD/src/thirdParty/wayi/src/FirePHP.class.php",
+				"/D/WebGame/XD/ig-root/deploy/doc/software/php-5.2.14-fpm-0.5.14.diff.gz",
+				"/D/WebGame/XD/ig-root/admintool/system/helpers/path_helper.php",
+				"/D/WebGame/XD/ig-root/Backstage/Program/XdManager/App_Code/SitePathProvider.cs",
+				"/D/WebGame/XD/ig-root/deploy/doc/software/php-5.2.14.tar.gz",
+				"/D/WebGame/XD/ig-root/admintool/user_guide_ja/general/alternative_php.html",
+				"/D/WebGame/XD/ig-root/admintool/user_guide/general/alternative_php.html",
+				"/D/WebGame/XD/ig-root/admintool/application/errors/error_php.php",
+				"/D/WebGame/XD/ig-root/deploy/doc/configure_file/php-xampp.ini",
+				"/D/WebGame/XD/ig-root/deploy/doc/configure_file/php-nginx.ini",
+				"/D/WebGame/XD/ig-root/deploy/doc/configure_file/php-fpm.conf",
+				"/D/WebGame/XD/ig-root/deploy/doc/configure_file/php.ini",
+				"/D/WebGame/XD/ig-root/deploy/test_program/phpinfo.php",
+				"/D/WebGame/XD/ig-root/Backstage/package.bat",
+				"/D/WebGame/XD/ig-root/admintool/user_guide/database/active_record.html",
+				"/D/WebGame/XD/ig-root/node/arena.js",
+				"/D/WebGame/XD/ig-root/XD/src/amfphp/Com/log.php",
+				"/D/WebGame/XD/ig-root/XD/src/amfphp/Com/function.php",
+				"/D/WebGame/XD/ig-root/XD/src/amfphp/Com/dungeonField.php",
+				"/D/WebGame/XD/ig-root/XD/src/amfphp/Com/battle.php",
 				"/C/Users/naokimiyasaka/AppData/Roaming/Sublime Text 3/Packages/User/Default (Windows).sublime-keymap",
 				"/C/Users/naokimiyasaka/AppData/Roaming/Sublime Text 3/Packages/Default/Default (Windows).sublime-keymap",
 				"/D/WebGame/XD/ig-root/XD/src/amfphp/Com/user.php",
@@ -122,7 +197,6 @@
 				"/D/WebGame/XD/ig-root/node/test/test.activityTimer.js",
 				"/D/WebGame/XD/ig-root/node/bossWar.js",
 				"/D/WebGame/XD/ig-root/node/bossTimer.js",
-				"/D/WebGame/XD/ig-root/XD/src/amfphp/Com/function.php",
 				"/D/WebGame/XD/ig-root/Backstage/Program/XdManager/js/jquery-1.4.2.js",
 				"/D/WebGame/XD/ig-root/node/run_test.js",
 				"/C/Users/naokimiyasaka/AppData/Roaming/Sublime Text 3/Packages/CTags/CTags.sublime-settings",
@@ -138,11 +212,11 @@
 			],
 			"find":
 			{
-				"height": 26.0
+				"height": 33.0
 			},
 			"find_in_files":
 			{
-				"height": 0.0,
+				"height": 97.0,
 				"where_history":
 				[
 				]
@@ -178,54 +252,54 @@
 			"groups":
 			[
 				{
-					"selected": 0,
+					"selected": 2,
 					"sheets":
 					[
 						{
 							"buffer": 0,
-							"file": "/D/WebGame/XD/ig-root/XD/src/amfphp/Com/battle.php",
+							"file": "/D/WebGame/XD/ig-root/node/arena.js",
 							"semi_transient": false,
 							"settings":
 							{
-								"buffer_size": 998,
+								"buffer_size": 11795,
 								"regions":
 								{
 								},
 								"selection":
 								[
 									[
-										328,
-										328
+										257,
+										257
 									]
 								],
 								"settings":
 								{
-									"origin_encoding": "ASCII",
-									"syntax": "Packages/PHP/PHP.tmLanguage",
+									"origin_encoding": "UTF-8",
+									"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
 									"translate_tabs_to_spaces": false
 								},
 								"translation.x": 0.0,
 								"translation.y": 0.0,
 								"zoom_level": 1.0
 							},
-							"stack_index": 0,
+							"stack_index": 2,
 							"type": "text"
 						},
 						{
 							"buffer": 1,
-							"file": "/D/WebGame/XD/ig-root/XD/src/amfphp/Com/dungeonField.php",
+							"file": "/D/WebGame/XD/ig-root/XD/src/amfphp/Com/award.php",
 							"semi_transient": false,
 							"settings":
 							{
-								"buffer_size": 3883,
+								"buffer_size": 11283,
 								"regions":
 								{
 								},
 								"selection":
 								[
 									[
-										3302,
-										3302
+										623,
+										623
 									]
 								],
 								"settings":
@@ -236,70 +310,40 @@
 									"translate_tabs_to_spaces": false
 								},
 								"translation.x": 0.0,
-								"translation.y": 916.0,
-								"zoom_level": 1.0
-							},
-							"stack_index": 2,
-							"type": "text"
-						},
-						{
-							"buffer": 2,
-							"file": "/D/WebGame/XD/ig-root/XD/src/amfphp/Com/function.php",
-							"semi_transient": false,
-							"settings":
-							{
-								"buffer_size": 34595,
-								"regions":
-								{
-								},
-								"selection":
-								[
-									[
-										20330,
-										20413
-									]
-								],
-								"settings":
-								{
-									"origin_encoding": "UTF-8",
-									"syntax": "Packages/PHP/PHP.tmLanguage",
-									"translate_tabs_to_spaces": false
-								},
-								"translation.x": 0.0,
-								"translation.y": 11104.0,
+								"translation.y": 0.0,
 								"zoom_level": 1.0
 							},
 							"stack_index": 1,
 							"type": "text"
 						},
 						{
-							"buffer": 3,
-							"file": "/D/WebGame/XD/ig-root/XD/src/amfphp/Com/log.php",
+							"buffer": 2,
+							"file": "/D/WebGame/XD/ig-root/node/dbCommander.js",
 							"semi_transient": false,
 							"settings":
 							{
-								"buffer_size": 9086,
+								"buffer_size": 187887,
 								"regions":
 								{
 								},
 								"selection":
 								[
 									[
-										2104,
-										2104
+										98290,
+										98290
 									]
 								],
 								"settings":
 								{
 									"origin_encoding": "UTF-8",
-									"syntax": "Packages/PHP/PHP.tmLanguage",
+									"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
 									"translate_tabs_to_spaces": false
 								},
 								"translation.x": 0.0,
-								"translation.y": 851.0,
+								"translation.y": 48115.0,
 								"zoom_level": 1.0
 							},
-							"stack_index": 3,
+							"stack_index": 0,
 							"type": "text"
 						}
 					]
@@ -307,11 +351,11 @@
 			],
 			"incremental_find":
 			{
-				"height": 26.0
+				"height": 23.0
 			},
 			"input":
 			{
-				"height": 0.0
+				"height": 32.0
 			},
 			"layout":
 			{
@@ -340,11 +384,11 @@
 			{
 				"height": 0.0
 			},
-			"position": "0,2,3,-1,-1,-1,-1,579,719,53,1367",
+			"position": "0,2,3,-32000,-32000,-1,-1,579,719,53,1367",
 			"project": "",
 			"replace":
 			{
-				"height": 48.0
+				"height": 42.0
 			},
 			"save_all_on_build": true,
 			"select_file":
@@ -352,6 +396,14 @@
 				"height": 0.0,
 				"selected_items":
 				[
+					[
+						"dbcommande",
+						"node\\dbCommander.js"
+					],
+					[
+						"arena",
+						"node\\arena.js"
+					]
 				],
 				"width": 0.0
 			},
@@ -365,11 +417,11 @@
 			},
 			"select_symbol":
 			{
-				"height": 0.0,
+				"height": 370.0,
 				"selected_items":
 				[
 				],
-				"width": 0.0
+				"width": 560.0
 			},
 			"settings":
 			{

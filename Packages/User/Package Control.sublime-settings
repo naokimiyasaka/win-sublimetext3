@@ -1,23 +1,29 @@
 {
 	"installed_packages":
 	[
-		"All Autocomplete",				//標準の自動補完（オートコンプリート）機能を強化し、マッチする文字列があればサジェストする。
-		"AndyPHP",						//PHPの関数群をコードアシストをサポート
-		"AutoFileName",					//タグやcssなどで、パスを入力する時に、ファイル名を補完する
-		"ConvertToUTF8",				//文字エンコードのShiftJIS等をUTF8に変換する
-		"CTags",						//宣言元にジャンプ
-		"DocBlockr",					//コメントを楽にしてくれる
-		"EditorConfig",					//エディタの設定の共通
-		"Goto-CSS-Declaration",			//cssを編集している時にジャンプとかできる
-		"HTML-CSS-JS Prettify",			//整形ツール
-		"IMESupport",					//インライン入力用
-		"Japanize",						//日本語用に変換する
-		"PHP Getters and Setters",		//get setを自動で作成するものだと思う
-		"SimpleClone",					//同じファイルを分割表示できるようにする
-		"SuperNavigator",				//ソースからあいまい検索する
-		"SyncedSideBar",				//サイドバーのソースを選択するのをハイライトにしている
-		"Theme - Flatland",				//テーマ関係
-		"Tmux",							
-		"TrailingSpaces"				
+		"All Autocomplete",
+		"AndyPHP",
+		"AutoFileName",
+		"ConvertToUTF8",
+		"CTags",
+		"DocBlockr",
+		"EditorConfig",
+		"Goto-CSS-Declaration",
+		"HTML-CSS-JS Prettify",
+		"IMESupport",
+		"Japanize",
+		"More Layouts",
+		"PHP Getters and Setters",
+		"SimpleClone",
+		"SublimeREPL",
+		"SuperNavigator",
+		"SyncedSideBar",
+		"Theme - Flatland",
+		"Tmux",
+		"TrailingSpaces"
+	],
+	"repositories":
+	[
+		"https://github.com/wuub/SublimeREPL"
 	]
 }
